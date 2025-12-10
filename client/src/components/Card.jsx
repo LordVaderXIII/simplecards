@@ -1,68 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { FaPlay, FaRedo, FaDice } from 'react-icons/fa';
-// Dynamic icon loading isn't straightforward with react-icons as it's a build-time tree-shakeable lib.
-// We will need a mapping or a way to import.
-// For "lightweight", let's import the full set of FA icons or use a dynamic icon component if we can find one,
-// OR just support a specific subset as per prompt examples?
-// Prompt says "from Font Awesome icons, e.g., 'fa-heart'".
-// I'll assume we can use `react-icons/fa` and access them dynamically via an object map or similar.
+import { FaPlay, FaPause, FaStop, FaRedo, FaDice } from 'react-icons/fa';
 import * as FaIcons from 'react-icons/fa';
 
 const DynamicIcon = ({ name, size = 64 }) => {
-  // Convert kebab-case (fa-heart) to PascalCase (FaHeart)
-  const iconName = name
-    .split('-')
-    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('');
-
-  // Check if icon exists in FaIcons, try adding "Fa" prefix if user just passed "heart"
-  // The prompt examples are "fa-heart", "fa-star".
-  // FaIcons exports are like FaHeart, FaStar.
-
-  // Clean input: "fa-heart" -> "FaHeart"
   const pascalName = name.replace(/(^\w|-\w)/g, (g) => g.replace('-', '').toUpperCase());
-
   const IconComponent = FaIcons[pascalName] || FaIcons[pascalName.replace(/^Fa/, '')] || FaIcons.FaQuestion;
-
   return <IconComponent size={size} />;
 };
 
 const Card = ({ data }) => {
-  const [timer, setTimer] = useState(null);
+  const [timerState, setTimerState] = useState('idle'); // idle, running, paused, finished
   const [timeLeft, setTimeLeft] = useState(null);
+  const [initialTime, setInitialTime] = useState(null);
   const [diceResult, setDiceResult] = useState(null);
 
   useEffect(() => {
-    // Reset state when card data changes (e.g. drawn from deck)
-    setTimer(null);
+    setTimerState('idle');
     setTimeLeft(null);
+    setInitialTime(null);
     setDiceResult(null);
   }, [data]);
 
   useEffect(() => {
     let interval = null;
-    if (timer === 'running' && timeLeft > 0) {
+    if (timerState === 'running' && timeLeft > 0) {
       interval = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
-      setTimer('finished');
+    } else if (timeLeft === 0 && timerState === 'running') {
+      setTimerState('finished');
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [timer, timeLeft]);
+  }, [timerState, timeLeft]);
 
-  const startTimer = () => {
+  const initTimer = (e) => {
+    e.stopPropagation();
     if (!data.action_value) return;
-    const initialTime = parseInt(data.action_value.split(',')[0], 10); // Handle "both" case which might have "60,6"
-    setTimeLeft(initialTime);
-    setTimer('running');
+    const duration = parseInt(data.action_value.split(',')[0], 10);
+    setInitialTime(duration);
+    setTimeLeft(duration);
+    setTimerState('running');
   };
 
-  const rollDice = () => {
+  const toggleTimer = (e) => {
+      e.stopPropagation();
+      if (timerState === 'running') {
+          setTimerState('paused');
+      } else if (timerState === 'paused') {
+          setTimerState('running');
+      }
+  };
+
+  const stopTimer = (e) => {
+      e.stopPropagation();
+      setTimerState('idle');
+      setTimeLeft(null);
+  };
+
+  const resetTimer = (e) => {
+      e.stopPropagation();
+      setTimeLeft(initialTime);
+      setTimerState('paused');
+  };
+
+  const rollDice = (e) => {
+    e.stopPropagation();
     if (!data.action_value) return;
-    // Handle "both": first is timer, second is dice. If just dice, first is dice.
     const values = data.action_value.toString().split(',');
     let sides = 6;
     if (data.action_type === 'both' && values.length > 1) {
@@ -84,28 +89,46 @@ const Card = ({ data }) => {
       <div className="action-container">
         {(data.action_type === 'timer' || data.action_type === 'both') && (
           <div className="action-item">
-            {timeLeft === null ? (
-               <button className="btn-action" onClick={startTimer}>
+            {timerState === 'idle' ? (
+               <button className="btn-action" onClick={initTimer}>
                  <FaPlay /> Start Timer ({parseInt(data.action_value.split(',')[0])}s)
                </button>
             ) : (
-               <div className="timer-display">
-                 {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                <div className="timer-container">
+                 <div className="timer-display">
+                    {timeLeft !== null ? (
+                        `${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}`
+                    ) : "0:00"}
+                 </div>
+                 <div className="timer-controls">
+                    {timerState === 'running' && (
+                        <button className="btn-icon" onClick={toggleTimer} title="Pause"><FaPause /></button>
+                    )}
+                    {timerState === 'paused' && (
+                        <button className="btn-icon" onClick={toggleTimer} title="Resume"><FaPlay /></button>
+                    )}
+                    {timerState === 'finished' && (
+                         <span style={{color: 'red', fontWeight: 'bold', display: 'flex', alignItems: 'center'}}>Done!</span>
+                    )}
+
+                    <button className="btn-icon" onClick={resetTimer} title="Reset"><FaRedo /></button>
+                    <button className="btn-icon" onClick={stopTimer} title="Stop"><FaStop /></button>
+                 </div>
                </div>
             )}
           </div>
         )}
 
         {(data.action_type === 'dice' || data.action_type === 'both') && (
-          <div className="action-item">
+          <div className="action-item" style={data.action_type === 'both' ? {marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '20px'} : {}}>
             {diceResult === null ? (
                <button className="btn-action" onClick={rollDice}>
                  <FaDice /> Roll Dice
                </button>
             ) : (
                <div className="dice-result">
-                 Result: {diceResult}
-                 <button className="btn-action" style={{marginLeft: '10px'}} onClick={rollDice}><FaRedo /></button>
+                 <span className="dice-value">Result: {diceResult}</span>
+                 <button className="btn-action" style={{marginLeft: '10px'}} onClick={rollDice}><FaDice /> Roll Again</button>
                </div>
             )}
           </div>
