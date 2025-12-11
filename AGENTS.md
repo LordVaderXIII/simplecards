@@ -14,7 +14,7 @@ This repository contains a lightweight, mobile-friendly Progressive Web App (PWA
 *   **Backend**: Express.js.
     *   API endpoints are prefixed with `/api` (e.g., `/api/upload`, `/api/decks`).
     *   Data is persisted as JSON files in the `decks/` directory.
-    *   Uses `multer` for CSV uploads and `csv-parser` for processing.
+    *   Uses `multer` for CSV uploads and `csv-parser` for processing. Literal `\n` in CSV body is converted to actual newline characters.
 *   **Frontend**: React (Vite).
     *   Located in `client/`.
     *   Styling follows Apple's Human Interface Guidelines (HIG) via CSS variables.

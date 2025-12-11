@@ -66,7 +66,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
 
         decks[deckName].cards.push({
           title: row.title || 'Untitled',
-          body: row.body || '',
+          body: (row.body || '').replace(/\\n/g, '\n'),
           action_type: row.action_type || 'none',
           action_value: row.action_value || '',
           back_icon: row.back_icon || 'fa-question'
@@ -96,15 +96,24 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
 });
 
 // List all decks
-app.get('/api/decks', (req, res) => {
+app.get('/api/decks', async (req, res) => {
   try {
-    const files = fs.readdirSync(DECKS_DIR);
-    const decks = files
-      .filter(file => file.endsWith('.json') && !file.endsWith('_state.json'))
-      .map(file => {
+    const files = await fs.promises.readdir(DECKS_DIR);
+    const deckFiles = files.filter(file => file.endsWith('.json') && !file.endsWith('_state.json'));
+
+    const deckPromises = deckFiles.map(async (file) => {
+      try {
+        const content = await fs.promises.readFile(path.join(DECKS_DIR, file), 'utf8');
+        const data = JSON.parse(content);
+        return { name: data.name, id: path.basename(file, '.json') };
+      } catch (e) {
+        // Fallback to filename if reading fails
         const name = path.basename(file, '.json');
-        return { name }; // Could read file to get more metadata if needed
-      });
+        return { name, id: name };
+      }
+    });
+
+    const decks = await Promise.all(deckPromises);
     res.json(decks);
   } catch (err) {
     console.error('Error listing decks:', err);
