@@ -255,3 +255,9 @@ button {
 .btn-icon:active {
   transform: scale(0.95);
 }
+
+.btn-icon svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}

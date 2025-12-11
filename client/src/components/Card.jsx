@@ -102,17 +102,17 @@ const Card = ({ data }) => {
                  </div>
                  <div className="timer-controls">
                     {timerState === 'running' && (
-                        <button className="btn-icon" onClick={toggleTimer} title="Pause" aria-label="Pause Timer"><FaPause size={20} color="white" /></button>
+                        <button className="btn-icon" onClick={toggleTimer} title="Pause" aria-label="Pause Timer"><FaPause /></button>
                     )}
                     {timerState === 'paused' && (
-                        <button className="btn-icon" onClick={toggleTimer} title="Resume" aria-label="Resume Timer"><FaPlay size={20} color="white" /></button>
+                        <button className="btn-icon" onClick={toggleTimer} title="Resume" aria-label="Resume Timer"><FaPlay /></button>
                     )}
                     {timerState === 'finished' && (
                          <span style={{color: 'red', fontWeight: 'bold', display: 'flex', alignItems: 'center'}}>Done!</span>
                     )}
 
-                    <button className="btn-icon" onClick={resetTimer} title="Reset" aria-label="Reset Timer"><FaUndo size={20} color="white" /></button>
-                    <button className="btn-icon" onClick={stopTimer} title="Stop" aria-label="Stop Timer"><FaStop size={20} color="white" /></button>
+                    <button className="btn-icon" onClick={resetTimer} title="Reset" aria-label="Reset Timer"><FaUndo /></button>
+                    <button className="btn-icon" onClick={stopTimer} title="Stop" aria-label="Stop Timer"><FaStop /></button>
                  </div>
                </div>
             )}
