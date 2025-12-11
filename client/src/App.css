@@ -188,8 +188,15 @@ button {
 }
 
 .dice-result {
-  font-size: 48px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.dice-value {
+  font-size: 48px;
 }
 
 .btn-action {
@@ -222,7 +229,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 20px;
   transition: transform 0.1s ease;
 }
 
