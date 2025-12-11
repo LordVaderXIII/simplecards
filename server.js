@@ -162,6 +162,30 @@ app.post('/api/deck/:name/state', (req, res) => {
   }
 });
 
+// Delete a deck
+app.delete('/api/deck/:name', (req, res) => {
+  const deckName = req.params.name.replace(/[^a-zA-Z0-9_-]/g, '_');
+  const filePath = getDeckPath(deckName);
+  const statePath = getStatePath(deckName);
+
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    } else {
+      return res.status(404).json({ error: 'Deck not found.' });
+    }
+
+    if (fs.existsSync(statePath)) {
+      fs.unlinkSync(statePath);
+    }
+
+    res.json({ message: 'Deck deleted successfully.' });
+  } catch (err) {
+    console.error('Error deleting deck:', err);
+    res.status(500).json({ error: 'Failed to delete deck.' });
+  }
+});
+
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/dist')));
 

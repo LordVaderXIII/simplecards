@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { FaPlay, FaPause, FaStop, FaRedo, FaDice } from 'react-icons/fa';
+import { FaPlay, FaPause, FaStop, FaUndo, FaDice } from 'react-icons/fa';
 import * as FaIcons from 'react-icons/fa';
 
 const DynamicIcon = ({ name, size = 64 }) => {
@@ -111,7 +111,7 @@ const Card = ({ data }) => {
                          <span style={{color: 'red', fontWeight: 'bold', display: 'flex', alignItems: 'center'}}>Done!</span>
                     )}
 
-                    <button className="btn-icon" onClick={resetTimer} title="Reset" aria-label="Reset Timer"><FaRedo /></button>
+                    <button className="btn-icon" onClick={resetTimer} title="Reset" aria-label="Reset Timer"><FaUndo /></button>
                     <button className="btn-icon" onClick={stopTimer} title="Stop" aria-label="Stop Timer"><FaStop /></button>
                  </div>
                </div>
