@@ -102,13 +102,32 @@ button {
   box-shadow: 0 4px 6px var(--shadow-color);
   text-decoration: none;
   color: var(--text-color);
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-weight: 600;
   transition: transform 0.1s ease;
 }
 
 .deck-item:active {
   transform: scale(0.98);
+}
+
+.btn-delete {
+  background-color: transparent;
+  color: #ff3b30;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  font-size: 18px;
+}
+
+.btn-delete:hover {
+  background-color: rgba(255, 59, 48, 0.1);
 }
 
 .card-table {

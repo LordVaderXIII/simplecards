@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 
 const DeckList = () => {
   const [decks, setDecks] = useState([]);
@@ -53,6 +53,30 @@ const DeckList = () => {
     }
   };
 
+  const handleDelete = async (e, deckName) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!window.confirm(`Are you sure you want to delete deck "${deckName}"?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/deck/${deckName}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        fetchDecks();
+      } else {
+        const err = await res.json();
+        alert('Failed to delete deck: ' + (err.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Error deleting deck:', err);
+      alert('Error deleting deck');
+    }
+  };
+
   return (
     <div className="container">
       <div className="header">
@@ -71,7 +95,15 @@ const DeckList = () => {
         <div className="deck-list">
           {decks.map((deck) => (
             <Link key={deck.name} to={`/deck/${deck.name}`} className="deck-item">
-              {deck.name}
+              <span>{deck.name}</span>
+              <button
+                className="btn-delete"
+                onClick={(e) => handleDelete(e, deck.name)}
+                title="Delete Deck"
+                aria-label={`Delete deck ${deck.name}`}
+              >
+                <FaTrash />
+              </button>
             </Link>
           ))}
         </div>
