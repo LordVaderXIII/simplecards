@@ -102,17 +102,17 @@ const Card = ({ data }) => {
                  </div>
                  <div className="timer-controls">
                     {timerState === 'running' && (
-                        <button className="btn-icon" onClick={toggleTimer} title="Pause"><FaPause /></button>
+                        <button className="btn-icon" onClick={toggleTimer} title="Pause" aria-label="Pause Timer"><FaPause /></button>
                     )}
                     {timerState === 'paused' && (
-                        <button className="btn-icon" onClick={toggleTimer} title="Resume"><FaPlay /></button>
+                        <button className="btn-icon" onClick={toggleTimer} title="Resume" aria-label="Resume Timer"><FaPlay /></button>
                     )}
                     {timerState === 'finished' && (
                          <span style={{color: 'red', fontWeight: 'bold', display: 'flex', alignItems: 'center'}}>Done!</span>
                     )}
 
-                    <button className="btn-icon" onClick={resetTimer} title="Reset"><FaRedo /></button>
-                    <button className="btn-icon" onClick={stopTimer} title="Stop"><FaStop /></button>
+                    <button className="btn-icon" onClick={resetTimer} title="Reset" aria-label="Reset Timer"><FaRedo /></button>
+                    <button className="btn-icon" onClick={stopTimer} title="Stop" aria-label="Stop Timer"><FaStop /></button>
                  </div>
                </div>
             )}
@@ -128,7 +128,7 @@ const Card = ({ data }) => {
             ) : (
                <div className="dice-result">
                  <span className="dice-value">Result: {diceResult}</span>
-                 <button className="btn-action" style={{marginLeft: '10px'}} onClick={rollDice}><FaDice /> Roll Again</button>
+                 <button className="btn-action" onClick={rollDice}><FaDice /> Roll Again</button>
                </div>
             )}
           </div>
