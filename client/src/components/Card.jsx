@@ -100,19 +100,19 @@ const Card = ({ data }) => {
                         `${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}`
                     ) : "0:00"}
                  </div>
-                 <div className="timer-controls">
+                 <div className="timer-controls" style={{ flexWrap: 'wrap' }}>
                     {timerState === 'running' && (
-                        <button className="btn-icon" onClick={toggleTimer} title="Pause" aria-label="Pause Timer"><FaPause /></button>
+                        <button className="btn-action" onClick={toggleTimer}><FaPause /> Pause</button>
                     )}
                     {timerState === 'paused' && (
-                        <button className="btn-icon" onClick={toggleTimer} title="Resume" aria-label="Resume Timer"><FaPlay /></button>
+                        <button className="btn-action" onClick={toggleTimer}><FaPlay /> Resume</button>
                     )}
                     {timerState === 'finished' && (
-                         <span style={{color: 'red', fontWeight: 'bold', display: 'flex', alignItems: 'center'}}>Done!</span>
+                         <span style={{color: 'red', fontWeight: 'bold', display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'center'}}>Done!</span>
                     )}
 
-                    <button className="btn-icon" onClick={resetTimer} title="Reset" aria-label="Reset Timer"><FaUndo /></button>
-                    <button className="btn-icon" onClick={stopTimer} title="Stop" aria-label="Stop Timer"><FaStop /></button>
+                    <button className="btn-action" onClick={resetTimer}><FaUndo /> Reset</button>
+                    <button className="btn-action" onClick={stopTimer}><FaStop /> Stop</button>
                  </div>
                </div>
             )}
