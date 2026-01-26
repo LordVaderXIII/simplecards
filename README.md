@@ -74,6 +74,12 @@ MyGame,Combo,Roll d6 in 30s,both,"30,6",fa-bolt
     ```
     This runs the backend on port 3000 and the frontend via Vite.
 
+    **Custom Port:**
+    To run the backend on a different port (e.g., 3001), use the `API_PORT` environment variable:
+    ```bash
+    API_PORT=3001 npm run dev
+    ```
+
 3.  Build for production:
     ```bash
     npm run build
@@ -96,3 +102,27 @@ The `/app/decks` volume is used to persist uploaded decks and game state.
 *   **Frontend**: React, Vite, CSS Modules (Apple HIG style).
 *   **Backend**: Node.js, Express, Multer (for uploads), CSV-Parser.
 *   **Storage**: JSON files (local filesystem).
+
+## Troubleshooting
+
+### Port Already Allocated Error
+
+If you encounter an error like `Bind for 0.0.0.0:3000 failed: port is already allocated`, it means a previous instance of the server is still running or the port is in use by another application.
+
+**Solution 1: Kill the blocking process**
+
+1.  Find the process ID (PID) using the port:
+    ```bash
+    lsof -i :3000
+    ```
+2.  Kill the process:
+    ```bash
+    kill -9 <PID>
+    ```
+
+**Solution 2: Use a different port**
+
+If you cannot kill the process (e.g., it's a system service), run the app on a different port:
+
+*   **Locally**: `API_PORT=3001 npm run dev`
+*   **Docker**: Map to a different host port: `docker run -p 3001:3000 ...`

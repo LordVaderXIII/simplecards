@@ -7,7 +7,7 @@ const cors = require('cors');
 const { Readable } = require('stream');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.API_PORT || process.env.PORT || 3000;
 // Use /app/decks if in Docker (common pattern), else local decks folder
 const DECKS_DIR = process.env.DECKS_DIR || path.join(__dirname, 'decks');
 
